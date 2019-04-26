@@ -3,8 +3,8 @@
         <h1>Game of life</h1>
         <button name="cycle" @click="cycle">Next cycle</button>
         <table>
-            <tr>
-                <td v-for="item in items">
+            <tr v-for="chunk in items">
+                <td v-for="item in chunk">
                     <span v-if="item.alive">x</span>
                 </td>
             </tr>
@@ -27,14 +27,21 @@
                 {"id": 3, "left": 2, "right": 4, "alive": false},
                 {"id": 4, "left": 3, "right": 5, "alive": false},
                 {"id": 5, "left": 4, "right": null, "alive": false},
-            ]
+            ];
+
+            let arrays = [];
+            while (this.items.length > 0)
+                arrays.push(this.items.splice(0, 10));
+
+            this.items = arrays;
+
         },
         methods: {
             cycle() {
-                    setInterval(() => {
-                        let item = this.items[Math.floor(Math.random() * this.items.length)];
-                        item.alive = !item.alive;
-                    }, 2000);
+                setInterval(() => {
+                    let item = this.items[Math.floor(Math.random() * this.items.length)];
+                    item.alive = !item.alive;
+                }, 2000);
             },
         }
     }
