@@ -1,29 +1,11 @@
-# game-of-life
+# Game of life
 
-## Project setup
-```
-npm install
-```
+### About
+Implementation of Conway's Game of Life. Technologies used are Vue and Vue CLI
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### Example run
 
-### Compiles and minifies for production
-```
-npm run build
-```
+![](resources/game-of-life.gif)
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### External links
+Read more about the [game](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
