@@ -4,9 +4,8 @@
         <button name="cycle" @click="cycle">Next cycle</button>
         <table>
             <tr v-for="chunk in itemsToDisplay">
-                <td v-for="item in chunk">
-                    <span v-if="item != null && item.alive">{{ item.alive }}</span>
-                    <!--<span >{{ item }}</span>-->
+                <td v-for="item in chunk" v-bind:class="{alive: item.alive}" @click="toggleLife(item.id)">
+                    <span v-if="item != null && item.alive"></span>
                 </td>
             </tr>
         </table>
@@ -20,7 +19,8 @@
             return {
                 items: [],
                 itemsToDisplay: [],
-                rowLength: 10
+                rowLength: 10,
+                isCycleRunning: false,
             }
         },
         mounted() {
@@ -34,10 +34,7 @@
                 let neighbour6 = (i + this.rowLength > this.rowLength * this.rowLength) || ((i - 1) % this.rowLength === 0) ? null : i + this.rowLength - 1;
                 let neighbour7 = ((i - 1) % this.rowLength === 0) ? null : i - 1;
                 let alive = false;
-                // For now that's how we generate alive items on the board.
-                if (i == 2 || i == 12 || i == 22) {
-                    alive = true;
-                }
+
                 this.items.push({
                     "id": i,
                     "neighbour0": neighbour0,
@@ -112,6 +109,18 @@
                 //     item.alive = !item.alive;
                 // }, 2000);
             },
+            toggleLife(itemId) {
+                let foundIndex = this.items.findIndex(x => x.id === itemId);
+                this.items[foundIndex].alive = !this.items[foundIndex].alive;
+
+                this.itemsToDisplay.forEach(array => {
+                    array.forEach(element => {
+                        if (element.id === itemId) {
+                            element.alive = !element.alive;
+                        }
+                    })
+                })
+            },
         }
     }
 
@@ -138,5 +147,8 @@
         height: 50px;
         border: solid 1px;
 
+    }
+    .alive {
+        background-color: darkred;
     }
 </style>
