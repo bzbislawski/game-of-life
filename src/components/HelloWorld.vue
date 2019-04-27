@@ -1,7 +1,7 @@
 <template>
     <div class="hello">
         <h1>Game of life</h1>
-        <button name="cycle" @click="cycle">Next cycle</button>
+        <button name="cycle" @click="cycle">Start cycle</button>
         <table>
             <tr v-for="chunk in itemsToDisplay">
                 <td v-for="item in chunk" v-bind:class="{alive: item.alive}" @click="toggleLife(item.id)">
@@ -20,7 +20,6 @@
                 items: [],
                 itemsToDisplay: [],
                 rowLength: 10,
-                isCycleRunning: false,
             }
         },
         mounted() {
@@ -49,90 +48,68 @@
                 });
             }
 
-            let array = JSON.parse(JSON.stringify(this.items));
-            while (array.length > 0)
-                this.itemsToDisplay.push(array.splice(0, this.rowLength));
+            this.populateBoard();
 
 
         },
         methods: {
             cycle() {
-                let afterCycleItems = [];
 
-                this.items.forEach((item) => {
+                setInterval(() => {
+                    let afterCycleItems = [];
+                    this.items.forEach((item) => {
 
-                    let nextCycleAlive = false;
+                        let nextCycleAlive = false;
 
-                    let n0Alive = this.items[item.neighbour0-1] !== undefined && this.items[item.neighbour0-1].alive ? 1 : 0;
-                    let n1Alive = this.items[item.neighbour1-1] !== undefined && this.items[item.neighbour1-1].alive ? 1 : 0;
-                    let n2Alive = this.items[item.neighbour2-1] !== undefined && this.items[item.neighbour2-1].alive ? 1 : 0;
-                    let n3Alive = this.items[item.neighbour3-1] !== undefined && this.items[item.neighbour3-1].alive ? 1 : 0;
-                    let n4Alive = this.items[item.neighbour4-1] !== undefined && this.items[item.neighbour4-1].alive ? 1 : 0;
-                    let n5Alive = this.items[item.neighbour5-1] !== undefined && this.items[item.neighbour5-1].alive ? 1 : 0;
-                    let n6Alive = this.items[item.neighbour6-1] !== undefined && this.items[item.neighbour6-1].alive ? 1 : 0;
-                    let n7Alive = this.items[item.neighbour7-1] !== undefined && this.items[item.neighbour7-1].alive ? 1 : 0;
-                    let aliveNeighbours = (n0Alive + n1Alive + n2Alive + n3Alive + n4Alive + n5Alive + n6Alive + n7Alive);
+                        let n0Alive = this.items[item.neighbour0-1] !== undefined && this.items[item.neighbour0-1].alive ? 1 : 0;
+                        let n1Alive = this.items[item.neighbour1-1] !== undefined && this.items[item.neighbour1-1].alive ? 1 : 0;
+                        let n2Alive = this.items[item.neighbour2-1] !== undefined && this.items[item.neighbour2-1].alive ? 1 : 0;
+                        let n3Alive = this.items[item.neighbour3-1] !== undefined && this.items[item.neighbour3-1].alive ? 1 : 0;
+                        let n4Alive = this.items[item.neighbour4-1] !== undefined && this.items[item.neighbour4-1].alive ? 1 : 0;
+                        let n5Alive = this.items[item.neighbour5-1] !== undefined && this.items[item.neighbour5-1].alive ? 1 : 0;
+                        let n6Alive = this.items[item.neighbour6-1] !== undefined && this.items[item.neighbour6-1].alive ? 1 : 0;
+                        let n7Alive = this.items[item.neighbour7-1] !== undefined && this.items[item.neighbour7-1].alive ? 1 : 0;
+                        let aliveNeighbours = (n0Alive + n1Alive + n2Alive + n3Alive + n4Alive + n5Alive + n6Alive + n7Alive);
 
-                    if (item.alive === false) {
-                        nextCycleAlive = aliveNeighbours === 3;
-                    }
-                    if (item.alive === true) {
-                        nextCycleAlive = aliveNeighbours === 3 || aliveNeighbours === 2;
-                    }
+                        if (item.alive === false) {
+                            nextCycleAlive = aliveNeighbours === 3;
+                        }
+                        if (item.alive === true) {
+                            nextCycleAlive = aliveNeighbours === 3 || aliveNeighbours === 2;
+                        }
 
-                    afterCycleItems.push({
-                        "id": item.id,
-                        "neighbour0": item.neighbour0,
-                        "neighbour1": item.neighbour1,
-                        "neighbour2": item.neighbour2,
-                        "neighbour3": item.neighbour3,
-                        "neighbour4": item.neighbour4,
-                        "neighbour5": item.neighbour5,
-                        "neighbour6": item.neighbour6,
-                        "neighbour7": item.neighbour7,
-                        "alive": nextCycleAlive,
-                    })
-                });
+                        afterCycleItems.push({
+                            "id": item.id,
+                            "neighbour0": item.neighbour0,
+                            "neighbour1": item.neighbour1,
+                            "neighbour2": item.neighbour2,
+                            "neighbour3": item.neighbour3,
+                            "neighbour4": item.neighbour4,
+                            "neighbour5": item.neighbour5,
+                            "neighbour6": item.neighbour6,
+                            "neighbour7": item.neighbour7,
+                            "alive": nextCycleAlive,
+                        })
+                    });
 
-
-                this.items = [];
-                this.itemsToDisplay = [];
                 this.items = afterCycleItems;
-                let array = JSON.parse(JSON.stringify(this.items));
-                while (array.length > 0)
-                    this.itemsToDisplay.push(array.splice(0, this.rowLength));
+                this.populateBoard();
 
-
-
-                // setInterval(() => {
-                //     let item = this.items[Math.floor(Math.random() * this.items.length)];
-                //     item.alive = !item.alive;
-                // }, 2000);
+                }, 500);
             },
             toggleLife(itemId) {
                 let foundIndex = this.items.findIndex(x => x.id === itemId);
                 this.items[foundIndex].alive = !this.items[foundIndex].alive;
 
-                this.itemsToDisplay.forEach(array => {
-                    array.forEach(element => {
-                        if (element.id === itemId) {
-                            element.alive = !element.alive;
-                        }
-                    })
-                })
+                this.populateBoard();
             },
+            populateBoard() {
+                this.itemsToDisplay = [];
+                let array = JSON.parse(JSON.stringify(this.items));
+                while (array.length > 0)
+                    this.itemsToDisplay.push(array.splice(0, this.rowLength));
+            }
         }
-    }
-
-    function Life(
-        id,
-        neighbour0,
-        neighbour1,
-    ) {
-        this.id = id;
-        this.neighbour0 = neighbour0;
-        this.neighbour1 = neighbour1;
-
     }
 </script>
 
