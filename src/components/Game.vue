@@ -1,5 +1,5 @@
 <template>
-    <div class="hello">
+    <div>
         <h1>Game of life</h1>
         <button name="cycle" @click="cycle">Start cycle</button>
         <table>
