@@ -6,7 +6,7 @@ Implementation of Conway's Game of Life. Technologies used are Vue and Vue CLI
 ### Example run
 
 <p align="center">
-![](resources/game-of-life.gif)
+    <img width="100" src="https://raw.githubusercontent.com/bzbislawski/game-of-life/master/resources/game-of-life.gif">
 </p>
 
 ### External links
