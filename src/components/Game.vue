@@ -24,33 +24,24 @@
         },
         mounted() {
             for (let i = 1; i <= this.rowLength * this.rowLength; i++) {
-                let neighbour0 = ((i - 1) % this.rowLength === 0) || i < this.rowLength + 1 ? null : i - this.rowLength - 1;
-                let neighbour1 = (i - this.rowLength > 0) ? i - this.rowLength :  null;
-                let neighbour2 = (i % this.rowLength === 0) || i <= this.rowLength - 1 ? null : i - this.rowLength + 1;
-                let neighbour3 = (i % this.rowLength === 0) ? null : i + 1;
-                let neighbour4 = (i + this.rowLength > this.rowLength * this.rowLength) || (i % this.rowLength === 0) ? null : i + this.rowLength + 1;
-                let neighbour5 = (i + this.rowLength <= this.rowLength * this.rowLength) ? i + this.rowLength : null;
-                let neighbour6 = (i + this.rowLength > this.rowLength * this.rowLength) || ((i - 1) % this.rowLength === 0) ? null : i + this.rowLength - 1;
-                let neighbour7 = ((i - 1) % this.rowLength === 0) ? null : i - 1;
-                let alive = false;
+                let neighbours = [];
+                neighbours[0] = ((i - 1) % this.rowLength === 0) || i < this.rowLength + 1 ? null : i - this.rowLength - 1;
+                neighbours[1] = (i - this.rowLength > 0) ? i - this.rowLength : null;
+                neighbours[2] = (i % this.rowLength === 0) || i <= this.rowLength - 1 ? null : i - this.rowLength + 1;
+                neighbours[3] = (i % this.rowLength === 0) ? null : i + 1;
+                neighbours[4] = (i + this.rowLength > this.rowLength * this.rowLength) || (i % this.rowLength === 0) ? null : i + this.rowLength + 1;
+                neighbours[5] = (i + this.rowLength <= this.rowLength * this.rowLength) ? i + this.rowLength : null;
+                neighbours[6] = (i + this.rowLength > this.rowLength * this.rowLength) || ((i - 1) % this.rowLength === 0) ? null : i + this.rowLength - 1;
+                neighbours[7] = ((i - 1) % this.rowLength === 0) ? null : i - 1;
 
                 this.items.push({
                     "id": i,
-                    "neighbour0": neighbour0,
-                    "neighbour1": neighbour1,
-                    "neighbour2": neighbour2,
-                    "neighbour3": neighbour3,
-                    "neighbour4": neighbour4,
-                    "neighbour5": neighbour5,
-                    "neighbour6": neighbour6,
-                    "neighbour7": neighbour7,
-                    "alive": alive,
+                    "neighbours": neighbours,
+                    "alive": false,
                 });
             }
 
             this.populateBoard();
-
-
         },
         methods: {
             cycle() {
@@ -61,15 +52,10 @@
 
                         let nextCycleAlive = false;
 
-                        let n0Alive = this.items[item.neighbour0-1] !== undefined && this.items[item.neighbour0-1].alive ? 1 : 0;
-                        let n1Alive = this.items[item.neighbour1-1] !== undefined && this.items[item.neighbour1-1].alive ? 1 : 0;
-                        let n2Alive = this.items[item.neighbour2-1] !== undefined && this.items[item.neighbour2-1].alive ? 1 : 0;
-                        let n3Alive = this.items[item.neighbour3-1] !== undefined && this.items[item.neighbour3-1].alive ? 1 : 0;
-                        let n4Alive = this.items[item.neighbour4-1] !== undefined && this.items[item.neighbour4-1].alive ? 1 : 0;
-                        let n5Alive = this.items[item.neighbour5-1] !== undefined && this.items[item.neighbour5-1].alive ? 1 : 0;
-                        let n6Alive = this.items[item.neighbour6-1] !== undefined && this.items[item.neighbour6-1].alive ? 1 : 0;
-                        let n7Alive = this.items[item.neighbour7-1] !== undefined && this.items[item.neighbour7-1].alive ? 1 : 0;
-                        let aliveNeighbours = (n0Alive + n1Alive + n2Alive + n3Alive + n4Alive + n5Alive + n6Alive + n7Alive);
+                        let aliveNeighbours = item.neighbours.filter(neighbour => {
+                            return neighbour !== null && this.items[neighbour - 1].alive;
+                        }).length;
+
 
                         if (item.alive === false) {
                             nextCycleAlive = aliveNeighbours === 3;
@@ -80,20 +66,13 @@
 
                         afterCycleItems.push({
                             "id": item.id,
-                            "neighbour0": item.neighbour0,
-                            "neighbour1": item.neighbour1,
-                            "neighbour2": item.neighbour2,
-                            "neighbour3": item.neighbour3,
-                            "neighbour4": item.neighbour4,
-                            "neighbour5": item.neighbour5,
-                            "neighbour6": item.neighbour6,
-                            "neighbour7": item.neighbour7,
+                            "neighbours": item.neighbours,
                             "alive": nextCycleAlive,
                         })
                     });
 
-                this.items = afterCycleItems;
-                this.populateBoard();
+                    this.items = afterCycleItems;
+                    this.populateBoard();
 
                 }, 500);
             },
@@ -125,6 +104,7 @@
         border: solid 1px;
 
     }
+
     .alive {
         background-color: darkred;
     }
